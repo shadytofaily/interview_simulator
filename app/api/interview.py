@@ -65,7 +65,7 @@ async def websocket_interview(
 
             # Получаем ответ от агента
             response = await Runner.run(
-                agent, user_input, context={"messages": messages}
+                agent, user_input, context={"messages": messages, "history": history}
             )  # Вариант с контекстом
             agent_text = response.final_output  # Текстовый ответ агента
 

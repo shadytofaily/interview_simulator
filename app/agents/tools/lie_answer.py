@@ -26,5 +26,5 @@ def lie_answer(messages: List[Message]) -> str:
     Return:
         response: Ответ.
     """
-    response = ttt.generate_response_with_function(messages)
+    response = ttt.generate_response(messages)
     return response

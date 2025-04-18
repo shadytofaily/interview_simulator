@@ -11,74 +11,74 @@ from app.model.stt import STT
 from app.model.tts import TTS
 from app.model.ttt import TTT
 
-# Используем директорию /tmp для временных файлов (доступна для записи всем пользователям)
+# Временная директория для аудиофайлов
 TEMP_DIR = "/tmp/ai-interview-temp"
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 router = APIRouter()
 
+# Модели и вспомогательные классы
 ttt = TTT()
 stt = STT()
 tts = TTS()
 
+# Промпты
 prompts = load_prompts("persona_system_prompt.yaml")
 
 
-# Вебсокет-эндпоинт для интервью
 @router.websocket("/ws/interview")
 async def websocket_interview(
     ws: WebSocket,
     persona: str = Query("Junior Python Developer"),
     skill: str = Query("Python programming"),
 ):
-    await ws.accept()  # Принимаем подключение
-    # системный промпт для агента на основе выбранной персоны и навыка
+    await ws.accept()
+
+    # Создаём системный промпт и агента
     system_prompt = prompts["persona_system_prompt"].format(
         persona=persona, skill=skill
     )
-    agent = create_interviewee_agent(system_prompt)  # агент для интервью
-    history = []  # История сообщений, которая будет передаваться агенту
+    interviewee = create_interviewee_agent(system_prompt)
+    agent = interviewee.get_agent()
+
     try:
         while True:
-            data = await ws.receive_text()  # сообщение от клиента
+            data = await ws.receive_text()
             json_data = json.loads(data)
-            if json_data["type"] == "text":  # текст
+
+            # Определяем тип входных данных: текст или аудио
+            if json_data["type"] == "text":
                 user_input = json_data.get("message", "")
                 is_audio = False
-            elif json_data["type"] == "audio":  # аудио
+            elif json_data["type"] == "audio":
                 audio_bytes = base64.b64decode(json_data["audio"])
                 temp_audio_path = os.path.join(TEMP_DIR, "temp_audio.wav")
                 with open(temp_audio_path, "wb") as f:
-                    f.write(audio_bytes)  # Сохраняем аудио во временный файл
-                user_input = stt.transcribe_from_path(
-                    temp_audio_path
-                )  # Распознаём речь
+                    f.write(audio_bytes)
+                user_input = stt.transcribe_from_path(temp_audio_path)
                 is_audio = True
+            else:
+                continue  # Неподдерживаемый тип
 
-            # Формируем историю сообщений для передачи агенту, включая текущие данные
-            messages = [
-                ttt.create_chat_message(msg["role"], msg["content"]) for msg in history
-            ]
-            messages.append(
-                ttt.create_chat_message("user", user_input)
-            )  # Добавляем текущее сообщение пользователя
+            # Добавляем сообщение пользователя в историю
+            interviewee.append_to_history("user", user_input)
 
-            # Получаем ответ от агента
+            # Получаем ответ от агента с учётом всей истории
             response = await Runner.run(
-                agent, user_input, context={"messages": messages, "history": history}
-            )  # Вариант с контекстом
-            agent_text = response.final_output  # Текстовый ответ агента
+                agent, user_input, context={"messages": interviewee.get_messages()}
+            )
+            agent_text = response.final_output
 
-            # Добавляем ответ агента в историю сообщений
-            history.append({"role": "assistant", "content": agent_text})
+            # Добавляем ответ агента в историю
+            interviewee.append_to_history("assistant", agent_text)
 
+            # Отправляем ответ обратно клиенту
             if is_audio:
-                # Генерируем аудиофайл с ответом агента
                 tts_response = tts.generate_speech(
                     agent_text, tone=prompts["persona_voice_tone_prompt"]
                 )
                 agent_audio = base64.b64encode(tts_response.content).decode("utf-8")
-                # Отправляем клиенту текст и аудио
+
                 await ws.send_json(
                     {
                         "type": "voice",
@@ -87,9 +87,8 @@ async def websocket_interview(
                         "audio": agent_audio,
                     }
                 )
-            elif not is_audio:
-                # Отправляем клиенту только текст
+            else:
                 await ws.send_json({"type": "text", "content": agent_text})
 
     except WebSocketDisconnect:
-        pass
+        print("🔌 Client disconnected")

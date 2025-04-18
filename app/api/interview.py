@@ -37,6 +37,7 @@ async def websocket_interview(
         persona=persona, skill=skill
     )
     agent = create_interviewee_agent(system_prompt)  # агент для интервью
+    history = []  # История сообщений, которая будет передаваться агенту
     try:
         while True:
             data = await ws.receive_text()  # сообщение от клиента
@@ -53,20 +54,24 @@ async def websocket_interview(
                     temp_audio_path
                 )  # Распознаём речь
                 is_audio = True
-            # Формируем историю сообщений для передачи агенту
+
+            # Формируем историю сообщений для передачи агенту, включая текущие данные
             messages = [
-                ttt.create_chat_message(msg["role"], msg["content"])
-                for msg in json_data.get("history", [])
+                ttt.create_chat_message(msg["role"], msg["content"]) for msg in history
             ]
             messages.append(
                 ttt.create_chat_message("user", user_input)
             )  # Добавляем текущее сообщение пользователя
+
             # Получаем ответ от агента
-            # response = await Runner.run(agent, messages)
             response = await Runner.run(
                 agent, user_input, context={"messages": messages}
             )  # Вариант с контекстом
             agent_text = response.final_output  # Текстовый ответ агента
+
+            # Добавляем ответ агента в историю сообщений
+            history.append({"role": "assistant", "content": agent_text})
+
             if is_audio:
                 # Генерируем аудиофайл с ответом агента
                 tts_response = tts.generate_speech(
@@ -85,5 +90,6 @@ async def websocket_interview(
             elif not is_audio:
                 # Отправляем клиенту только текст
                 await ws.send_json({"type": "text", "content": agent_text})
+
     except WebSocketDisconnect:
         pass

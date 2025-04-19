@@ -103,11 +103,14 @@
                         throw new Error('Нет данных для отображения. Возможно, оценка еще не была выполнена.');
                     }
                     console.log(data)
+                    console.log(data.last_evaluation_result_ciriteria)
+
+                    console.log(data.last_evaluation_result)
                     // Заполняем содержимое элементов
-                    document.getElementById('Structural').textContent = data.last_evaluation_result_ciriteria.Structural || "-";
-                    document.getElementById('Enough_questions').textContent = data.last_evaluation_result_ciriteria.Enough_questions || "-";
-                    document.getElementById('Relevantly_ended').textContent = data.last_evaluation_result_ciriteria.Relevantly_ended || "-";
-                    document.getElementById('Candidate_steps').textContent = data.last_evaluation_result_ciriteria.Candidate_steps || "-";
+                    document.getElementById('Structural').textContent = data.last_evaluation_result_ciriteria || "-";
+                    // document.getElementById('Enough_questions').textContent = data.last_evaluation_result_ciriteria.Enough_questions || "-";
+                    // document.getElementById('Relevantly_ended').textContent = data.last_evaluation_result_ciriteria.Relevantly_ended || "-";
+                    // document.getElementById('Candidate_steps').textContent = data.last_evaluation_result_ciriteria.Candidate_steps || "-";
 
                     document.getElementById('situation').textContent = data.last_evaluation_result.Situation || "-";
                     document.getElementById('task').textContent = data.last_evaluation_result.Task || "-";

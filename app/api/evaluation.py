@@ -34,7 +34,7 @@ async def evaluate_endpoint(request: Request):
     last_evaluation_result_ciriteria = response_criteria.final_output_as(cls=dict)
     # 5. Вернём клиенту результат сразу
     result = {
-        **last_evaluation_result,
+        **last_evaluation_result.dict(),
         "criteria": repr(last_evaluation_result_ciriteria),
     }
 

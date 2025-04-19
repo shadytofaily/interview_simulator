@@ -1,79 +1,19 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Interviewee Agent</title>
-    <style>
-        body {
-            background-image: url('static/cows.jpg');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-        }
-
-        .button-style {
-            transition: all 0.3s ease;
-            background-color: transparent;
-            border: 2px solid;
-        }
-
-        .button-style:hover {
-            background-color: #4A90E2;
-            color: white;
-        }
-    </style>
 </head>
-
-<body class="min-h-screen">
-    <div class="flex flex-col items-center font-sans bg-[#2B2D33] bg-opacity-70 min-h-screen w-full pt-10">
-        <!-- Заголовок страницы -->
-        <h1 class="text-4xl text-white font-bold mb-8">Добро пожаловать к нашему ассистенту</h1>
-
-        <!-- Контейнер для кнопок -->
-        <div class="w-full flex px-24 mb-10">
-            <!-- Секция 1 -->
-            <div class="flex-1 flex justify-start px-6">
-                <a href="/select-persona"
-                    class="button-style flex justify-center items-center hover:bg-[#FF6A47] border-[#FF8B6B] rounded-lg w-96 h-[40rem] font-semibold text-white hover:text-[#FF8B6B] uppercase text-xl transition-all duration-200 ease-in-out text-center">
-                    провести <br /> интервью
-                </a>
-            </div>
-
-            <!-- Секция 2 -->
-            <div class="flex-1 flex justify-center px-6">
-                <a href="/evaluation"
-                    class="button-style flex justify-center items-center hover:bg-[#4A2C8C] border-[#6A4CAD] rounded-lg w-96 h-[40rem] font-semibold text-white hover:text-[#6A4CAD] uppercase text-xl transition-all duration-200 ease-in-out text-center">
-                    оценить <br /> интервью
-                </a>
-            </div>
-
-            <!-- Секция 3 -->
-            <div class="flex-1 flex justify-end px-6">
-                <button onclick="playSecretAudio()"
-                    class="button-style flex justify-center items-center hover:bg-[#FDD835] border-[#FFEB3B] rounded-lg w-96 h-[40rem] font-semibold text-white hover:text-white uppercase text-xl transition-all duration-200 ease-in-out text-center">
-                    секретик
-                </button>
-            </div>
+<body class="bg-[#2B2D33] min-h-screen">
+    <div class="flex flex-col justify-center items-center min-h-screen font-sans">
+        <div class="flex space-x-8">
+            <a href="/select-persona" class="flex justify-center items-center bg-[#FF8B6B] hover:bg-white border-2 rounded w-40 h-40 font-semibold text-white hover:text-[#FF8B6B] uppercase transition-colors">
+                провести <br/> интервью
+            </a>
+            <a href="/evaluation" class="flex justify-center items-center bg-[#6A4CAD] hover:bg-white border-2 rounded w-40 h-40 font-semibold text-white hover:text-[#6A4CAD] uppercase transition-colors">
+                оценить <br/> интервью  
+            </a>
         </div>
-        <!-- Короткий многострочный текст -->
-        <p class="text-white text-lg mb-8 w-1/4 text-center">
-            Выбирайте, что делать дальше! Нажмите на любую кнопку и продолжим. Хотите провести интервью, оценить его или
-            что-то
-            другое — решать вам!
-        </p>
     </div>
-
-    <!-- Аудио элемент -->
-    <audio id="secretAudio" src="static/sasha.mp3"></audio>
-
-    <!-- Скрипт воспроизведения -->
-    <script>
-        function playSecretAudio() {
-            const audio = document.getElementById('secretAudio');
-            audio.play();
-        }
-    </script>
 </body>
-
 </html>

@@ -10,10 +10,10 @@ evaluation_system_prompt: |
 
     Ситуация, задача, действие и результат должны быть четко определены и не содержать лишней информации.
 
-    Для анализа каждой категории используй:
+    Для анализа компонент STAR используй:
     <tools>
-    extract_situation
-    extract_task
-    extract_action
-    extract_result
-    </tools>
+    Ситуация - extract_situation
+    Задача - extract_task
+    Действие - extract_action
+    Результат - extract_result
+    </tools`

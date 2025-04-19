@@ -1,7 +1,5 @@
 from pathlib import Path
-
 from app.core.openai import client
-
 
 class TTS:
     def __init__(self, model: str = "gpt-4o-mini-tts", voice: str = "ash"):
@@ -15,7 +13,10 @@ class TTS:
         """
         try:
             response = self.client.audio.speech.create(
-                model=self.model, voice=self.voice, input=text, instructions=tone
+                model=self.model,
+                voice=self.voice,
+                input=text,
+                instructions=tone
             )
             return response
         except Exception as e:
@@ -27,7 +28,9 @@ class TTS:
         """
         try:
             with self.client.audio.speech.with_streaming_response.create(
-                model=self.model, voice=self.voice, input=text
+                model=self.model,
+                voice=self.voice,
+                input=text
             ) as response:
                 response.stream_to_file(file_path)
             return True

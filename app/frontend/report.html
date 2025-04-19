@@ -17,9 +17,9 @@
         
         <div id="error-message" class="hidden py-4 text-red-600 text-center"></div>
         
-        <div id="report-content" class="hidden space-y-4">
+        <div id="report-content" class="hidden space-y-8">
             <div>
-                <h2 class="font-bold text-blue-700">Ситуация (Situation)</h2>
+                <h2 class="font-bold text-blue-700">BIGGGG Ситуация (Situation)</h2>
                 <div id="situation" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
             </div>
             
@@ -37,6 +37,25 @@
                 <h2 class="font-bold text-red-700">Результат (Result)</h2>
                 <div id="result" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
             </div>
+
+            <div>
+                <h2 class="font-bold text-red-700">Structure</h2>
+                <div id="Structural" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+            </div>
+            <div>
+                <h2 class="font-bold text-red-700">Questions</h2>
+                <div id="Enough_questions" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+            </div>
+            <div>
+                <h2 class="font-bold text-red-700">Relevance</h2>
+                <div id="Relevantly_ended" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+            </div>
+            <div>
+                <h2 class="font-bold text-red-700">Candidate future steps</h2>
+                <div id="Candidate_steps" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+            </div>
+
+
         </div>
         
         <div class="mt-6 text-center">
@@ -78,10 +97,15 @@
                     }
                     
                     // Заполняем содержимое элементов
-                    document.getElementById('situation').textContent = data.Situation || "-";
-                    document.getElementById('task').textContent = data.Task || "-";
-                    document.getElementById('action').textContent = data.Action || "-";
-                    document.getElementById('result').textContent = data.Result || "-";
+                    document.getElementById('Structural').textContent = data.LastEvaluationResultCriteria.Structural || "-";
+                    document.getElementById('Enough_questions').textContent = data.LastEvaluationResultCriteria.Enough_questions || "-";
+                    document.getElementById('Relevantly_ended').textContent = data.LastEvaluationResultCriteria.Relevantly_ended || "-";
+                    document.getElementById('Candidate_steps').textContent = data.LastEvaluationResultCriteria.Candidate_steps || "-";
+                    
+                    document.getElementById('situation').textContent = data.LastEvaluationResult.Situation || "-";
+                    document.getElementById('task').textContent = data.LastEvaluationResult.Task || "-";
+                    document.getElementById('action').textContent = data.LastEvaluationResult.Action || "-";
+                    document.getElementById('result').textContent = data.LastEvaluationResult.Result || "-";
                     
                     // Скрываем индикатор загрузки и показываем результаты
                     loadingIndicator.classList.add('hidden');

@@ -1,11 +1,14 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
 from app.api.evaluation import router as evaluation_router
 from app.api.interview import router as interview_router
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Инициализируем роутеры для API
 app.include_router(evaluation_router)

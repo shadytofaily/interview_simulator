@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Отчет по результатам интервью</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body class="bg-[#2B2D33] min-h-screen font-sans">
+  <div class="max-w-2xl mx-auto my-8 bg-white shadow p-6 rounded">
+    <h1 class="mb-4 font-bold text-2xl text-center">Отчет по результатам интервью</h1>
+
+    <div id="loading-indicator" class="py-4 text-center">
+      <div class="inline-block border-t-2 border-b-2 border-blue-500 rounded-full w-8 h-8 animate-spin"></div>
+      <p class="mt-2 text-gray-600">Загрузка результатов...</p>
+    </div>
+
+    <div id="error-message" class="hidden py-4 text-red-600 text-center"></div>
+
+    <div id="report-content" class="hidden space-y-6">
+      <!-- STAR -->
+      <div>
+        <h2 class="font-bold text-blue-700">Ситуация (Situation)</h2>
+        <div id="situation" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+      </div>
+
+      <div>
+        <h2 class="font-bold text-green-700">Задача (Task)</h2>
+        <div id="task" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+      </div>
+
+      <div>
+        <h2 class="font-bold text-purple-700">Действия (Action)</h2>
+        <div id="action" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+      </div>
+
+      <div>
+        <h2 class="font-bold text-red-700">Результат (Result)</h2>
+        <div id="result" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+      </div>
+
+      <!-- Корпоративные ценности -->
+      <div>
+        <h2 class="font-bold text-green-700">Оценка по корпоративным ценностям</h2>
+        <ul id="value-list" class="list-disc list-inside text-gray-800 space-y-2">
+          <!-- Динамически заполняется -->
+        </ul>
+      </div>
+
+      <!-- Оценка интервьюера -->
+      <div>
+        <h2 class="font-bold text-indigo-700">Оценка интервьюера</h2>
+        <div class="space-y-2 text-gray-800">
+          <p><strong>Структура:</strong> <span id="structure">-</span></p>
+          <p><strong>Проверка компетенции:</strong> <span id="competency_coverage">-</span></p>
+          <p><strong>Завершение интервью:</strong> <span id="closing">-</span></p>
+          <p><strong>Тон общения:</strong> <span id="tone">-</span></p>
+          <p><strong>Общее впечатление:</strong> <span id="overall">-</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 text-center">
+      <a href="/evaluation" class="inline-block bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white">Назад к оценке</a>
+      <a href="/" class="inline-block bg-gray-500 hover:bg-gray-600 ml-2 px-4 py-2 rounded text-white">На главную</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const loadingIndicator = document.getElementById('loading-indicator');
+      const errorMessage = document.getElementById('error-message');
+      const reportContent = document.getElementById('report-content');
+
+      const timeout = setTimeout(() => {
+        loadingIndicator.classList.add('hidden');
+        errorMessage.textContent = 'Превышено время ожидания ответа от сервера';
+        errorMessage.classList.remove('hidden');
+      }, 20000);
+
+      fetch('/api/evaluation')
+        .then(response => {
+          clearTimeout(timeout);
+          if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('situation').textContent = data.STAR?.Situation || "-";
+          document.getElementById('task').textContent = data.STAR?.Task || "-";
+          document.getElementById('action').textContent = data.STAR?.Action || "-";
+          document.getElementById('result').textContent = data.STAR?.Result || "-";
+
+          const valueList = document.getElementById('value-list');
+          valueList.innerHTML = '';
+          for (const [key, val] of Object.entries(data.Values || {})) {
+            const li = document.createElement('li');
+            if (typeof val === 'object' && val !== null) {
+              li.innerHTML = `<strong>${key}</strong>:<br>
+                              <em>Заключение:</em> ${val.conclusion}<br>
+                              <em>Пояснение:</em> ${val.explanation}`;
+            } else {
+              li.textContent = `${key}: ${val}`;
+            }
+            valueList.appendChild(li);
+          }
+
+          const feedback = data.InterviewerFeedback || {};
+          document.getElementById('structure').textContent = feedback.structure || "-";
+          document.getElementById('competency_coverage').textContent = feedback.competency_coverage || "-";
+          document.getElementById('closing').textContent = feedback.closing || "-";
+          document.getElementById('tone').textContent = feedback.tone || "-";
+          document.getElementById('overall').textContent = feedback.overall || "-";
+
+          loadingIndicator.classList.add('hidden');
+          reportContent.classList.remove('hidden');
+        })
+        .catch(error => {
+          loadingIndicator.classList.add('hidden');
+          errorMessage.textContent = `Произошла ошибка при загрузке результатов: ${error.message}`;
+          errorMessage.classList.remove('hidden');
+        });
+    });
+  </script>
+</body>
+</html>

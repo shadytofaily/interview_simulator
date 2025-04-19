@@ -102,7 +102,7 @@
                     if (!data) {
                         throw new Error('Нет данных для отображения. Возможно, оценка еще не была выполнена.');
                     }
-
+                    console.log(data)
                     // Заполняем содержимое элементов
                     document.getElementById('Structural').textContent = data.last_evaluation_result_ciriteria.Structural || "-";
                     document.getElementById('Enough_questions').textContent = data.last_evaluation_result_ciriteria.Enough_questions || "-";

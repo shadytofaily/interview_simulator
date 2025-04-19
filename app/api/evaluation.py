@@ -1,20 +1,21 @@
+from agents import Runner
 from fastapi import APIRouter, Request
 
-from app.agents.evaluation_agent import create_evaluation_agent
 from app.agents.dialogue_evaluation_agent import create_criteria_checker_agent
-
-from agents import Runner
-
+from app.agents.evaluation_agent import create_evaluation_agent
 from app.agents.prompts.utils import load_prompts
 
 router = APIRouter()
 
 prompts = load_prompts("evaluation_system_prompt.yaml")
 system_prompt = prompts["evaluation_system_prompt"]
-criteria_system_promt = load_prompts("criteria_checker_prompt.yaml")["criteria_checker_prompt"]
+criteria_system_promt = load_prompts("criteria_checker_prompt.yaml")[
+    "criteria_checker_prompt"
+]
 
 # Хранилище для последних результатов оценки
-last_evaluation_result:dict = {}
+last_evaluation_result: dict = {}
+
 
 @router.post("/api/evaluation")
 async def evaluate_endpoint(request: Request):
@@ -32,8 +33,13 @@ async def evaluate_endpoint(request: Request):
     last_evaluation_result = response.final_output_as(cls=dict)
     last_evaluation_result_ciriteria = response_criteria.final_output_as(cls=dict)
     # 5. Вернём клиенту результат сразу
-    result = {'last_evaluation_result_ciriteria':last_evaluation_result_ciriteria, 'last_evaluation_result':last_evaluation_result}
+    result = {
+        "last_evaluation_result_ciriteria": last_evaluation_result_ciriteria,
+        "last_evaluation_result": last_evaluation_result,
+    }
+    print(result)
     return result
+
 
 @router.get("/api/evaluation")
 async def get_evaluation_result():

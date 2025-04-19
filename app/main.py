@@ -7,6 +7,7 @@ from app.api.interview import router as interview_router
 
 app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 # Инициализируем роутеры для API
 app.include_router(evaluation_router)
 app.include_router(interview_router)

@@ -10,10 +10,7 @@ from app.agents.tools.extract_criterias import extract_criterias
 
 
 class CriteriaOutput(BaseModel):
-    Structural: str
-    Enough_questions: str
-    Relevantly_ended: str
-    Candidate_steps: str
+    Criteria: str
 
 
 def create_criteria_checker_agent(system_prompt: str) -> Agent:

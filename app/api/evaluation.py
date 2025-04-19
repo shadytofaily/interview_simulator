@@ -31,7 +31,7 @@ async def evaluate_endpoint(request: Request):
     response_criteria = await Runner.run(criteria_agent, messages)
     # 4. Преобразуем в словарь и запомним
     last_evaluation_result = response.final_output_as(cls=dict)
-    last_evaluation_result_ciriteria = response_criteria.final_output_as(cls=dict)
+    last_evaluation_result_ciriteria = response_criteria
     # 5. Вернём клиенту результат сразу
     result = {
         **last_evaluation_result.dict(),

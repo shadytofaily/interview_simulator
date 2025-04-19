@@ -10,7 +10,7 @@ from app.agents.tools.extract_criterias import extract_criterias
 
 
 class CriteriaOutput(BaseModel):
-    Situation: str
+    Structural: str
     Enough_questions: str
     Relevantly_ended: str
     Candidate_steps: str
